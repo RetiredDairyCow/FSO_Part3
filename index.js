@@ -1,10 +1,14 @@
 /* const { request, response } = require('express' )*/
+const Person = require('./models/person')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const bodyParser = require('body-parser')
+
 
 const app = express()
 app.use(express.json())
+/* app.use(bodyParser.json()) */
 app.use(cors())
 app.use(express.static('build'))
 
@@ -15,42 +19,14 @@ morgan.token('type', function (req, res) {
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :type'))
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({})
+    .then(person => {
+        response.json(person)
+    })
 })
 
-app.get('/info', (request, response) => {
-    const totPersons = Object.keys(persons).length
-    
-    const info = {
-        content: `Phonebook has info for ${totPersons} people`,
-        date: new Date()
-    }
-    response.json(info)
-})
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -67,26 +43,21 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    console.log(request.body.number)
-    const reqBody = request.body
-    const reqName = request.body.name
-    
-    if(persons.find(p => p.name === reqName)) {
-        return response.status(400).json({"error": "name must be unique"})
-    }
+  const body = request.body
 
-    if (!reqBody.name) return response.status(400).json({"error" : "content missing"})
-    
-    const newPerson = {
-        id: Math.floor(Math.random() * 100),
-        name : reqName,
-        number : Number(reqBody.number),
-        important : reqBody.important || false,
-        
-        date: new Date()
-    }
-    persons = persons.concat(newPerson)
-    response.json(newPerson)
+  if (body.name.length && body.number.length === 0) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+    /* date: new Date(), */
+  })
+
+  person.save().then(savedPerson => {
+    response.status(201).json(savedPerson)
+  })
 
 })
 
@@ -94,3 +65,13 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
 })
+
+/* app.get('/info', (request, response) => {
+    const totPersons = Object.keys(persons).length
+    
+    const info = {
+        content: `Phonebook has info for ${totPersons} people`,
+        date: new Date()
+    }
+    response.json(info)
+}) */
