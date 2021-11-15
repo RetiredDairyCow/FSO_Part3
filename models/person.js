@@ -1,3 +1,4 @@
+/*File responsible for connecting to MongoDB and setting up database schema. Exported as a Person of type model */
 const dotenv = require('dotenv').config()
 const mongoose = require('mongoose')
 
