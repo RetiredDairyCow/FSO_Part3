@@ -8,3 +8,5 @@ Content-Type: application/json
     "name": "Olivia is the best",
     "number": 7604645565
 }
+###
+GET http://localhost:3001/api/persons/6190ac975eb3e7828e2fb6b6
