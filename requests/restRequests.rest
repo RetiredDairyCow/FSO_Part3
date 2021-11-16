@@ -5,8 +5,11 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Olivia is the best",
+    "name": "as",
     "number": 7604645565
 }
 ###
-GET http://localhost:3001/api/persons/6190ac975eb3e7828e2fb6b6
+GET http://localhost:3001/api/persons/ABCD6190ac975eb3e7828e2fb6b6
+
+###info 
+GET http://localhost:3001/info

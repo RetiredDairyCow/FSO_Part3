@@ -1,6 +1,7 @@
 /*File responsible for connecting to MongoDB and setting up database schema. Exported as a Person of type model */
 const dotenv = require('dotenv').config()
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 
@@ -15,8 +16,18 @@ mongoose.connect(url)
   })
 
 const phonebookSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minlength: 3,
+    required: true,
+    unique: true  
+  },
+  number: {
+    type: String,
+    minlength: 8,
+    required: true,
+    unique: true
+  }
 })
 
 phonebookSchema.set('toJSON', {
@@ -26,5 +37,7 @@ phonebookSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
+phonebookSchema.plugin(uniqueValidator)
 
 module.exports = mongoose.model('Person', phonebookSchema)

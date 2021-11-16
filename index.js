@@ -32,7 +32,7 @@ app.get('/info', (request, response, next) => {
         reqDate = new Date()
         const retString = `Phonebook has info for ${count}`
         const retDate = `${reqDate}`
-        response.send(`${retString}<br> ${retDate}`)
+        response.send(`${retString}<br>${retDate}`)
 
       
     })
@@ -85,22 +85,19 @@ app.delete('/api/persons/:id', (request, response, next) => {
     response.status(204).end() */
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
-
-  if (body.name.length && body.number.length === 0) {
-    return response.status(400).json({ error: 'content missing' })
-  }
 
   const person = new Person({
     name: body.name,
     number: body.number,
-    /* date: new Date(), */
   })
 
-  person.save().then(savedPerson => {
-    response.status(201).json(savedPerson)
-  })
+  person.save()
+    .then(savedPerson => {
+        response.status(201).json(savedPerson)
+    })
+    .catch(error => next(error))
 
 })
 
@@ -123,6 +120,9 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
     if (error.name === 'CastError') {
       return response.status(400).send({error: 'malformmated id'})
+    }
+    else if (error.name === 'ValidationError'){
+        return response.status(400).json({error: error.message})
     }
     next(error) /*if not a cast error, the middleware passes the error to the default
     express error handler*/
