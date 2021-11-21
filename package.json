@@ -10,7 +10,9 @@
     "build:ui": "",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint .",
+    "lintFix": "eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,8 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-plugin-react": "^7.27.1",
     "nodemon": "^2.0.15"
   }
 }
